@@ -70,7 +70,7 @@ import { request } from '@/api/client'
 type Row = Record<string, string | number | null>
 
 const ENDPOINT = '/api/dispatch'
-const columns = ["指令编号", "下发单位", "指令类型", "下发时间", "执行时限", "执行人", "执行结果", "指令状态"]
+const columns = ["指令编号", "关联升压站", "指令类型", "下发时间", "执行时限", "执行人", "执行结果", "指令状态"]
 const actions = ["确认执行", "完成回复", "驳回指令"]
 const statuses = ["待执行", "执行中", "已完成", "已驳回"]
 const stats = [{"label": "待执行指令", "value": 0}, {"label": "今日完成数", "value": 0}, {"label": "驳回指令数", "value": 0}]

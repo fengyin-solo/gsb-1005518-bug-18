@@ -30,6 +30,13 @@ def list_entries(
     return PageResult(items=items, total=total, page=page, size=size)
 
 
+@router.get("/export")
+def export_entries() -> dict[str, Any]:
+    """导出调度指令清单：返回按编号排序的全量数据，字段口径与列表一致。"""
+    items, total = service.list_entries(page=1, size=10000)
+    return {"module": "dispatch", "total": total, "items": items}
+
+
 @router.get("/{entry_id}", response_model=dict)
 def get_entry(entry_id: int) -> dict:
     """读取单条调度指令单明细；不存在时给出可读的错误说明。"""
@@ -53,13 +60,4 @@ def run_action(entry_id: int, payload: EntryPayload) -> ActionResult:
     """对单条调度指令单执行确认执行、完成回复、驳回指令；不允许的动作会被拦下并说明原因。"""
     action = str(payload.values.get("action") or "").strip()
     entry, message = service.run_action(entry_id, action)
-    if entry is None:
-        return ActionResult(ok=False, message=message)
-    return ActionResult(ok=True, message=message, entry=entry)
-
-
-@router.get("/export")
-def export_entries() -> dict[str, Any]:
-    """导出调度指令清单：返回当前过滤条件下的全量数据。"""
-    items, total = service.list_entries(page=1, size=10000)
-    return {"module": "dispatch", "total": total, "items": items}
+    return ActionResult(ok=entry is not None, message=message, entry=entry)
